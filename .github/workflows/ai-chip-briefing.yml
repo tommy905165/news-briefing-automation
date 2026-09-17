@@ -1,0 +1,29 @@
+name: AI칩 시장 리포트 발송
+
+on:
+  schedule:
+    # 평일(월~금) 오전 9:40 KST (UTC +9이므로 0:40 UTC)
+    - cron: '40 0 * * 1-5'
+  workflow_dispatch:  # 수동 실행도 가능
+
+jobs:
+  send-briefing:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Python 설정
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: 필수 라이브러리 설치
+        run: |
+          pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client
+      
+      - name: 뉴스 검색 및 이메일 발송
+        env:
+          GMAIL_TOKEN: ${{ secrets.GMAIL_TOKEN }}
+          EMAIL_TO: hjkim@aimtog.co.kr
+        run: python scripts/send_ai_chip_briefing.py
