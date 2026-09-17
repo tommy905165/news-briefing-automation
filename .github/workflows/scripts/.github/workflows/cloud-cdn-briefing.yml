@@ -1,0 +1,25 @@
+name: 클라우드/CDN 뉴스 브리핑
+
+on:
+  schedule:
+    # 매주 수요일 오전 9:50 KST
+    - cron: '50 0 * * 3'
+  workflow_dispatch:
+
+jobs:
+  send-briefing:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Python 설정
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: 뉴스 검색 및 이메일 발송
+        env:
+          GMAIL_TOKEN: ${{ secrets.GMAIL_TOKEN }}
+          EMAIL_TO: hjkim@aimtog.co.kr
+        run: python scripts/send_cloud_cdn_briefing.py
